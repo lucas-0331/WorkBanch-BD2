@@ -18,7 +18,7 @@ tagline: O organizador de estudos do IF!
 description: Facilite e otimize seus estudos com o novo organizador do IF!
 author: Erik Abdala
 baseurl: '/OrganizadorIF' # the subpath of your site, e.g. /blog
-url: 'https://lucas-033.github.io' # the base hostname & protocol for your site, e.g. http://example.com
+url: 'https://lucas-033.github.io/Biologia' # the base hostname & protocol for your site, e.g. http://example.com
 exclude: ["Gemfile", "Gemfile.lock", "LICENSE"]
 
 favicon_ico: "/assets/images/favicon.ico"
