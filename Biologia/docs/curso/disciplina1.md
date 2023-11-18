@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Linguagens de Programação II
-parent: Disciplinas
+parent: Biologia
 nav_order: 1
 ---
 
