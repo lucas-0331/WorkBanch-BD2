@@ -1,7 +1,7 @@
 ---
 layout: home
 title: Início
-nav_exclude: true
+nav_exclude: false
 permalink: /:path/
 seo:
   type: Site
