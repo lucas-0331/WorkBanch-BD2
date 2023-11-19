@@ -64,7 +64,7 @@ defaults:
     values:
       layout: schedule
   - scope:
-      path: ''
+      path: '/Biologia'
       type: announcements
     values:
       layout: announcement
