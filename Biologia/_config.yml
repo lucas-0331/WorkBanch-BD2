@@ -46,7 +46,7 @@ collections:
 # Default layouts for each collection type
 defaults:
   - scope:
-      path: ''
+      path: '/Biologia'
       type: staffers
     values:
       layout: staffer
@@ -54,12 +54,12 @@ defaults:
       subpath: '/assets/images/'
       width: 300
   - scope:
-      path: ''
+      path: '/Biologia'
       type: modules
     values:
       layout: module
   - scope:
-      path: ''
+      path: '/Biologia'
       type: schedules
     values:
       layout: schedule
