@@ -1,240 +1,262 @@
--- Cria o database controle e utiliza ela
-CREATE DATABASE IF NOT EXISTS controle;
-USE controle;
+-- MySQL Workbench Forward Engineering
 
-CREATE TABLE IF NOT EXISTS Fornecedor (
-	id_fornecedor INTEGER NOT NULL PRIMARY KEY,
-	cnpj VARCHAR(14) NOT NULL,
-    razao_social VARCHAR(45)    
-);
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-CREATE TABLE IF NOT EXISTS Categoria (
-	id_categoria INTEGER NOT NULL PRIMARY KEY,
-    tipo_categoria VARCHAR(45) NOT NULL
-);
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema controle
+-- -----------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS Produto (
-	id_produto INTEGER NOT NULL PRIMARY KEY,
-    nome_produto VARCHAR(45) NOT NULL,
-    codigo_produto VARCHAR(45) NOT NULL,
-    valor_produto DECIMAL(6,2) NOT NULL,
-    quantidade_produto INTEGER,
-    disponivel_produto BOOL DEFAULT FALSE,
-    imagem_produto VARCHAR(45),
-    produto_id_categoria INTEGER NOT NULL,
-    FOREIGN KEY (produto_id_categoria) REFERENCES Categoria (id_categoria),
-    produto_id_fornecedor INTEGER NOT NULL,
-    FOREIGN KEY (produto_id_fornecedor) REFERENCES Fornecedor (id_fornecedor)
-);
+-- -----------------------------------------------------
+-- Schema controle
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `controle` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `controle` ;
 
-CREATE TABLE IF NOT EXISTS Cliente (
-	id_cliente INTEGER NOT NULL PRIMARY KEY,
-    nome_cliente VARCHAR(45),
-    cpf_cliente VARCHAR(11),
-    data_nascimento_cliente DATE,
-    rua_endereco_cliente VARCHAR(45),
-    numero_endereco_cliente VARCHAR(7),
-    bairro_endereco_cliente VARCHAR(45),
-    cep_endreco_cliente VARCHAR(8),
-    cidade_endereco_cliente VARCHAR(45),
-    estado_endereco_cliente CHAR(2),
-    complemento_endereco_cliente VARCHAR(45),
-    ddd_telefone_cliente VARCHAR(3),
-    numero_telefone_cliente VARCHAR(9)
-);
-
-CREATE TABLE IF NOT EXISTS Venda (
-	id_venda INTEGER NOT NULL PRIMARY KEY,
-    quantidade_venda INTEGER NOT NULL,
-    data_venda DATE NOT NULL,
-    valor_venda DECIMAL(7,2) NOT NULL,
-    venda_id_cliente INTEGER NOT NULL,
-    FOREIGN KEY (venda_id_cliente) REFERENCES Cliente (id_cliente)
-);
-
-CREATE TABLE IF NOT EXISTS Compra (
-	id_compra INTEGER NOT NULL PRIMARY KEY,
-    quantidade_compra INTEGER NOT NULL,
-    data_compra DATE NOT NULL,
-    valor_compra DECIMAL(7,2),
-    compra_id_fornecedor INTEGER,
-    FOREIGN KEY (compra_id_fornecedor) REFERENCES Fornecedor (id_fornecedor)
-);
-
-CREATE TABLE IF NOT EXISTS Venda_Produto (
-	venda_id_venda INTEGER NOT NULL,
-    produto_id_produto INTEGER NOT NULL,
-    valor_venda_produto DECIMAL(11,2) NOT NULL,
-    quantidade_venda_produto INTEGER NOT NULL,
-    FOREIGN KEY (venda_id_venda) REFERENCES Venda (id_venda),
-    FOREIGN KEY (produto_id_produto) REFERENCES Produto (id_produto)
-);
-
-CREATE TABLE IF NOT EXISTS Compra_Produto (
-	compra_id_compra INTEGER NOT NULL,
-    produto_id_produto INTEGER NOT NULL,
-    valor_compra_produto DECIMAL(11,2) NOT NULL,
-    quantidade_compra_produto INTEGER NOT NULL,
-    FOREIGN KEY (compra_id_compra) REFERENCES Compra (id_compra),
-    FOREIGN KEY (produto_id_produto) REFERENCES Produto (id_produto)
-);
-
-INSERT INTO Fornecedor (id_fornecedor,
-                        cnpj,
-                        razao_social) VALUES
-(1, '80600947000172', 'Natura'),
-(2, '87435219000100', 'Boticario'),
-(3, '41675162000107', 'Avon'),
-(4, '97614603000115', 'Jequeti');
+-- -----------------------------------------------------
+-- Table `controle`.`Categoria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Categoria` (
+  `id_categoria` INT NOT NULL,
+  `tipo_categoria` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_categoria`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Categoria (id_categoria,
-                        tipo_categoria) VALUES
-(1, 'Perfume'),
-(2, 'Maquiagem'),
-(3, 'Cabelo'),
-(4, 'Pele'),
-(5, 'Produto Infantil');
+-- -----------------------------------------------------
+-- Table `controle`.`Cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Cliente` (
+  `id_cliente` INT NOT NULL,
+  `nome_cliente` VARCHAR(45) NULL DEFAULT NULL,
+  `cpf_cliente` VARCHAR(11) NULL DEFAULT NULL,
+  `data_nascimento_cliente` DATE NULL DEFAULT NULL,
+  `rua_endereco_cliente` VARCHAR(45) NULL DEFAULT NULL,
+  `numero_endereco_cliente` VARCHAR(7) NULL DEFAULT NULL,
+  `bairro_endereco_cliente` VARCHAR(45) NULL DEFAULT NULL,
+  `cep_endreco_cliente` VARCHAR(8) NULL DEFAULT NULL,
+  `cidade_endereco_cliente` VARCHAR(45) NULL DEFAULT NULL,
+  `estado_endereco_cliente` CHAR(2) NULL DEFAULT NULL,
+  `complemento_endereco_cliente` VARCHAR(45) NULL DEFAULT NULL,
+  `ddd_telefone_cliente` VARCHAR(3) NULL DEFAULT NULL,
+  `numero_telefone_cliente` VARCHAR(9) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_cliente`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Produto (id_produto,
-                        nome_produto,
-                        codigo_produto,
-                        valor_produto,
-                        quantidade_produto,
-                        disponivel_produto,
-                        imagem_produto,
-                        produto_id_categoria,
-                        produto_id_fornecedor) VALUES
-(1, 'Perfume Floral', 'PFL123', 100.00, 50, 1, 'imagem_perfume.jpg', 1, 1),
-(2, 'Batom Matte', 'BMT456', 25.00, 0, 1, 'imagem_batom.jpg', 2, 2),
-(3, 'Shampoo Nutritivo', 'SN789', 30.00, 75, 1, 'imagem_shampoo.jpg', 3, 3),
-(4, 'Creme Hidratante Facial', 'CHF567', 50.00, 40, 1, 'imagem_creme.jpg', 4, 4),
-(5, 'Sabonete Infantil', 'SBI234', 15.00, 120, 1, 'imagem_sabonete.jpg', 5, 1),
-(6, 'Eau de Parfum Amadeirado', 'EDP789', 120.00, 30, 1, 'imagem_perfume_amadeirado.jpg', 1, 2),
-(7, 'Paleta de Sombras Neutras', 'PSN567', 50.00, 60, 1, 'imagem_paleta_sombras.jpg', 2, 3),
-(8, 'Condicionador Reparador', 'CR123', 35.00, 80, 1, 'imagem_condicionador.jpg', 3, 4),
-(9, 'Sérum Antienvelhecimento', 'SEA456', 75.00, 25, 1, 'imagem_serum.jpg', 4, 1),
-(10, 'Kit Shampoo e Condicionador Infantil', 'KSCI789', 18.00, 90, 1, 'imagem_kit_infantil.jpg', 5, 2);
+-- -----------------------------------------------------
+-- Table `controle`.`Fornecedor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Fornecedor` (
+  `id_fornecedor` INT NOT NULL,
+  `cnpj` VARCHAR(14) NOT NULL,
+  `razao_social` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_fornecedor`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Cliente (id_cliente,
-                        nome_cliente,
-                        cpf_cliente,
-                        data_nascimento_cliente,
-                        rua_endereco_cliente,
-                        numero_endereco_cliente,
-                        bairro_endereco_cliente,
-                        cep_endreco_cliente,
-                        cidade_endereco_cliente,
-                        estado_endereco_cliente,
-                        complemento_endereco_cliente,
-                        ddd_telefone_cliente,
-                        numero_telefone_cliente) VALUES
-(1, 'Maria Silva', '12345678901', '1990-05-15', 'Rua Flores', '123', 'Centro', '12345678', 'Cidade A', 'SP', 'Apto 101', '11', '987654321'),
-(2, 'José Oliveira', '98765432102', '1985-08-20', 'Avenida Principal', '456', 'Bairro Verde', '54321876', 'Cidade B', 'MG', 'Casa 202', '21', '999876543'),
-(3, 'Ana Souza', '45678901203', '1995-02-10', 'Rua das Palmeiras', '789', 'Jardim Azul', '98765432', 'Cidade C', 'SP', 'Bloco B', '31', '987654123'),
-(4, 'Carlos Santos', '32165498704', '1980-11-25', 'Travessa das Ruas', '101', 'Vila Amarela', '87654321', 'Cidade D', 'MG', 'Casa 55', '41', '999123456'),
-(5, 'Juliana Lima', '78901234505', '1998-07-03', 'Alameda das Praias', '234', 'Praia do Sol', '23456789', 'Cidade E', 'RJ', 'Apartamento 303', '51', '998765432');
+-- -----------------------------------------------------
+-- Table `controle`.`Compra`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Compra` (
+  `id_compra` INT NOT NULL,
+  `quantidade_compra` INT NOT NULL,
+  `data_compra` DATE NOT NULL,
+  `valor_compra` DECIMAL(7,2) NULL DEFAULT NULL,
+  `compra_id_fornecedor` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id_compra`),
+  INDEX `compra_id_fornecedor` (`compra_id_fornecedor` ASC) VISIBLE,
+  CONSTRAINT `Compra_ibfk_1`
+    FOREIGN KEY (`compra_id_fornecedor`)
+    REFERENCES `controle`.`Fornecedor` (`id_fornecedor`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Venda (id_venda,
-                        quantidade_venda,
-                        data_venda,
-                        valor_venda,
-                        venda_id_cliente) VALUES
-(1, 3, '2023-10-05', 150.00, 1),
-(2, 2, '2023-09-20', 90.50, 2),
-(3, 5, '2023-11-02', 220.75, 3);
+-- -----------------------------------------------------
+-- Table `controle`.`Produto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Produto` (
+  `id_produto` INT NOT NULL,
+  `nome_produto` VARCHAR(45) NOT NULL,
+  `codigo_produto` VARCHAR(45) NOT NULL,
+  `valor_produto` DECIMAL(6,2) NOT NULL,
+  `quantidade_produto` INT NULL DEFAULT NULL,
+  `disponivel_produto` TINYINT(1) NULL DEFAULT '0',
+  `imagem_produto` VARCHAR(45) NULL DEFAULT NULL,
+  `produto_id_categoria` INT NOT NULL,
+  PRIMARY KEY (`id_produto`),
+  INDEX `produto_id_categoria` (`produto_id_categoria` ASC) VISIBLE,
+  CONSTRAINT `Produto_ibfk_1`
+    FOREIGN KEY (`produto_id_categoria`)
+    REFERENCES `controle`.`Categoria` (`id_categoria`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Compra (id_compra,
-                        quantidade_compra,
-                        data_compra,
-                        valor_compra,
-                        compra_id_fornecedor) VALUES
-(1, 100, '2023-10-10', 1000.00, 1),
-(2, 50, '2023-09-25', 500.50, 2),
-(3, 75, '2023-11-05', 750.75, 3);
+-- -----------------------------------------------------
+-- Table `controle`.`Compra_Produto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Compra_Produto` (
+  `compra_id_compra` INT NOT NULL,
+  `produto_id_produto` INT NOT NULL,
+  `valor_compra_produto` DECIMAL(11,2) NOT NULL,
+  `quantidade_compra_produto` INT NOT NULL,
+  INDEX `compra_id_compra` (`compra_id_compra` ASC) VISIBLE,
+  INDEX `produto_id_produto` (`produto_id_produto` ASC) VISIBLE,
+  CONSTRAINT `Compra_Produto_ibfk_1`
+    FOREIGN KEY (`compra_id_compra`)
+    REFERENCES `controle`.`Compra` (`id_compra`),
+  CONSTRAINT `Compra_Produto_ibfk_2`
+    FOREIGN KEY (`produto_id_produto`)
+    REFERENCES `controle`.`Produto` (`id_produto`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Venda_Produto (venda_id_venda,
-                            produto_id_produto,
-                            valor_venda_produto,
-                            quantidade_venda_produto) VALUES
-(1, 1, 20.00, 1),
-(1, 2, 30.00, 2),
-(2, 3, 40.25, 1),
-(3, 4, 30.00, 3),
-(3, 5, 60.75, 2);
+-- -----------------------------------------------------
+-- Table `controle`.`Venda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Venda` (
+  `id_venda` INT NOT NULL,
+  `quantidade_venda` INT NOT NULL,
+  `data_venda` DATE NOT NULL,
+  `valor_venda` DECIMAL(7,2) NOT NULL,
+  `venda_id_cliente` INT NOT NULL,
+  PRIMARY KEY (`id_venda`),
+  INDEX `venda_id_cliente` (`venda_id_cliente` ASC) VISIBLE,
+  CONSTRAINT `Venda_ibfk_1`
+    FOREIGN KEY (`venda_id_cliente`)
+    REFERENCES `controle`.`Cliente` (`id_cliente`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-INSERT INTO Compra_Produto (compra_id_compra,
-                            produto_id_produto,
-                            valor_compra_produto,
-                            quantidade_compra_produto) VALUES
-(1, 1, 9.00, 50),
-(1, 2, 15.50, 25),
-(2, 3, 12.00, 30),
-(2, 4, 29.50, 15),
-(3, 5, 18.75, 25);
-
-INSERT INTO Venda (id_venda, quantidade_venda, data_venda, valor_venda, venda_id_cliente)
-SELECT 4, SUM(vp.quantidade_venda_produto), CURDATE(), SUM(vp.quantidade_venda_produto * p.valor_produto), 1
-FROM Venda_Produto vp
-JOIN Produto p ON vp.produto_id_produto = p.id_produto;
-
-
-SELECT 
-    Cliente.nome_cliente, 
-    Produto.nome_produto, 
-    Venda_Produto.valor_venda_produto
-FROM 
-    Cliente
-JOIN 
-    Venda ON Cliente.id_cliente = Venda.venda_id_cliente
-JOIN 
-    Venda_Produto ON Venda.id_venda = Venda_Produto.venda_id_venda
-JOIN 
-    Produto ON Produto.id_produto = Venda_Produto.produto_id_produto;
+-- -----------------------------------------------------
+-- Table `controle`.`Venda_Produto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `controle`.`Venda_Produto` (
+  `venda_id_venda` INT NOT NULL,
+  `produto_id_produto` INT NOT NULL,
+  `valor_venda_produto` DECIMAL(11,2) NOT NULL,
+  `quantidade_venda_produto` INT NOT NULL,
+  INDEX `venda_id_venda` (`venda_id_venda` ASC) VISIBLE,
+  INDEX `produto_id_produto` (`produto_id_produto` ASC) VISIBLE,
+  CONSTRAINT `Venda_Produto_ibfk_1`
+    FOREIGN KEY (`venda_id_venda`)
+    REFERENCES `controle`.`Venda` (`id_venda`),
+  CONSTRAINT `Venda_Produto_ibfk_2`
+    FOREIGN KEY (`produto_id_produto`)
+    REFERENCES `controle`.`Produto` (`id_produto`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
 
 
-SELECT nome_produto FROM Produto WHERE disponivel_produto = 1;
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-UPDATE Produto SET disponivel_produto = 0 WHERE id_produto = 5;
 
-SELECT nome_produto FROM Produto WHERE disponivel_produto = 0;
+-- Populando a tabela Fornecedor
+INSERT INTO Fornecedor (id_fornecedor, cnpj, razao_social) VALUES
+(1, '12345678901234', 'Fornecedor A'),
+(2, '23456789012345', 'Fornecedor B'),
+(3, '34567890123456', 'Fornecedor C'),
+(4, '45678901234567', 'Fornecedor D'),
+(5, '56789012345678', 'Fornecedor E'),
+(6, '67890123456789', 'Fornecedor F'),
+(7, '78901234567890', 'Fornecedor G'),
+(8, '89012345678901', 'Fornecedor H'),
+(9, '90123456789012', 'Fornecedor I'),
+(10, '01234567890123', 'Fornecedor J'),
+(11, '98765432109876', 'Fornecedor K'),
+(12, '87654321098765', 'Fornecedor L'),
+(13, '76543210987654', 'Fornecedor M'),
+(14, '65432109876543', 'Fornecedor N'),
+(15, '54321098765432', 'Fornecedor O');
 
-SELECT nome_produto, valor_produto, valor_produto * 0.10 FROM Produto;
+-- Populando a tabela Produto
+INSERT INTO Produto (id_produto, nome_produto, codigo_produto, valor_produto, quantidade_produto, disponivel_produto, imagem_produto, produto_id_categoria) VALUES
+(1, 'Produto A', 'ABC123', 10.99, 100, 1, 'imagem_produto_A.jpg', 1),
+(2, 'Produto B', 'DEF456', 20.49, 75, 1, 'imagem_produto_B.jpg', 1),
+(3, 'Produto C', 'GHI789', 15.29, 120, 1, 'imagem_produto_C.jpg', 2),
+(4, 'Produto D', 'JKL012', 30.99, 50, 1, 'imagem_produto_D.jpg', 2),
+(5, 'Produto E', 'MNO345', 25.79, 90, 1, 'imagem_produto_E.jpg', 3),
+(6, 'Produto F', 'PQR678', 12.99, 110, 1, 'imagem_produto_F.jpg', 3),
+(7, 'Produto G', 'STU901', 18.49, 80, 1, 'imagem_produto_G.jpg', 4),
+(8, 'Produto H', 'VWX234', 22.99, 65, 1, 'imagem_produto_H.jpg', 4),
+(9, 'Produto I', 'YZA567', 28.99, 55, 1, 'imagem_produto_I.jpg', 5),
+(10, 'Produto J', 'BCD890', 14.99, 85, 1, 'imagem_produto_J.jpg', 5),
+(11, 'Produto K', 'EFG123', 19.99, 70, 1, 'imagem_produto_K.jpg', 1),
+(12, 'Produto L', 'HIJ456', 23.49, 60, 1, 'imagem_produto_L.jpg', 1),
+(13, 'Produto M', 'KLM789', 32.29, 45, 1, 'imagem_produto_M.jpg', 2),
+(14, 'Produto N', 'OPQ012', 27.99, 95, 1, 'imagem_produto_N.jpg', 2),
+(15, 'Produto O', 'RST345', 11.79, 105, 1, 'imagem_produto_O.jpg', 3),
+(16, 'Produto P', 'UVW678', 17.99, 75, 1, 'imagem_produto_P.jpg', 3),
+(17, 'Produto Q', 'XYZ901', 21.49, 80, 1, 'imagem_produto_Q.jpg', 4),
+(18, 'Produto R', 'ABC234', 26.99, 70, 1, 'imagem_produto_R.jpg', 4),
+(19, 'Produto S', 'DEF567', 29.99, 65, 1, 'imagem_produto_S.jpg', 5),
+(20, 'Produto T', 'GHI890', 13.99, 90, 1, 'imagem_produto_T.jpg', 5),
+(21, 'Produto U', 'JKL123', 16.49, 85, 1, 'imagem_produto_U.jpg', 1),
+(22, 'Produto V', 'MNO456', 31.29, 50, 1, 'imagem_produto_V.jpg', 1),
+(23, 'Produto W', 'PQR789', 20.99, 75, 1, 'imagem_produto_W.jpg', 2),
+(24, 'Produto X', 'STU012', 24.49, 60, 1, 'imagem_produto_X.jpg', 2),
+(25, 'Produto Y', 'VWX345', 33.29, 40, 1, 'imagem_produto_Y.jpg', 3),
+(26, 'Produto Z', 'YZA678', 28.99, 55, 1, 'imagem_produto_Z.jpg', 3),
+(27, 'Produto AA', 'BCD901', 12.79, 95, 1, 'imagem_produto_AA.jpg', 4),
+(28, 'Produto BB', 'EFG234', 18.99, 80, 1, 'imagem_produto_BB.jpg', 4),
+(29, 'Produto CC', 'HIJ567', 22.49, 70, 1, 'imagem_produto_CC.jpg', 5),
+(30, 'Produto DD', 'KLM890', 30.29, 45, 1, 'imagem_produto_DD.jpg', 5),
+(31, 'Produto EE', 'OPQ123', 15.99, 85, 1, 'imagem_produto_EE.jpg', 1),
+(32, 'Produto FF', 'RST456', 19.49, 65, 1, 'imagem_produto_FF.jpg', 1),
+(33, 'Produto GG', 'UVW789', 25.29, 60, 1, 'imagem_produto_GG.jpg', 2),
+(34, 'Produto HH', 'XYZ012', 32.49, 45, 1, 'imagem_produto_HH.jpg', 2),
+(35, 'Produto II', 'ABC345', 27.99, 70, 1, 'imagem_produto_II.jpg', 3),
+(36, 'Produto JJ', 'DEF678', 29.99, 65, 1, 'imagem_produto_JJ.jpg', 3),
+(37, 'Produto KK', 'GHI901', 13.99, 90, 1, 'imagem_produto_KK.jpg', 4),
+(38, 'Produto LL', 'JKL234', 16.49, 85, 1, 'imagem_produto_LL.jpg', 4),
+(39, 'Produto MM', 'MNO567', 19.99, 75, 1, 'imagem_produto_MM.jpg', 5),
+(40, 'Produto NN', 'PQR890', 32.29, 50, 1, 'imagem_produto_NN.jpg', 5),
+(41, 'Produto OO', 'STU123', 21.99, 80, 1, 'imagem_produto_OO.jpg', 1),
+(42, 'Produto PP', 'VWX456', 26.49, 70, 1, 'imagem_produto_PP.jpg', 1),
+(43, 'Produto QQ', 'YZA789', 28.99, 55, 1, 'imagem_produto_QQ.jpg', 2),
+(44, 'Produto RR', 'BCD012', 12.79, 95, 1, 'imagem_produto_RR.jpg', 2),
+(45, 'Produto SS', 'EFG345', 18.99, 80, 1, 'imagem_produto_SS.jpg', 3),
+(46, 'Produto TT', 'HIJ678', 22.49, 70, 1, 'imagem_produto_TT.jpg', 3),
+(47, 'Produto UU', 'KLM901', 30.29, 45, 1, 'imagem_produto_UU.jpg', 4),
+(48, 'Produto VV', 'OPQ234', 15.99, 85, 1, 'imagem_produto_VV.jpg', 4),
+(49, 'Produto WW', 'RST567', 19.49, 65, 1, 'imagem_produto_WW.jpg', 5),
+(50, 'Produto XX', 'UVW890', 25.29, 60, 1, 'imagem_produto_XX.jpg', 5);
 
-SELECT nome_cliente, cpf_cliente, data_nascimento_cliente, ddd_telefone_cliente, numero_telefone_cliente FROM Cliente WHERE nome_cliente LIKE '%Lima';
-
-SELECT nome_produto, valor_produto, quantidade_produto FROM Produto WHERE valor_produto > 50 AND valor_produto < 200;
-
-SELECT nome_produto, valor_produto, quantidade_produto FROM Produto WHERE produto_id_categoria = 2;
-
-SELECT nome_cliente, cidade_endereco_cliente FROM Cliente WHERE estado_endereco_cliente = 'MG';
-
-SELECT nome_produto AS 'produto'
-FROM Produto
-INNER JOIN Categoria ON produto_id_categoria = id_categoria
-WHERE tipo_categoria = 'perfume';
-
-SELECT SUM(valor_venda) AS 'valor total'
-FROM Venda
-INNER JOIN Venda_Produto ON venda_id_venda = id_venda
-INNER JOIN Produto ON produto_id_produto = id_produto
-INNER JOIN Categoria ON produto_id_categoria = id_categoria
-WHERE tipo_categoria = 'maquiagem';
-
-SELECT nome_produto, data_compra 
-FROM produto
-INNER JOIN Compra_Produto ON produto_id_produto = id_produto
-INNER JOIN Compra ON compra_id_compra = id_compra
-WHERE quantidade_produto = 0;
-
-SELECT (v.valor_venda) AS 'Quantidade Vendida', f.razao_social AS 'Fornecedor'
-FROM Venda AS v 
-INNER JOIN Venda_Produto AS vp ON vp.venda_id_venda = v.id_venda
-INNER JOIN Produto AS p ON vp.produto_id_produto = p.id_produto
-INNER JOIN Fornecedor as f ON p.produto_id_fornecedor = f.id_fornecedor;
+-- Populando a tabela Categoria
+INSERT INTO Categoria (id_categoria, tipo_categoria) VALUES
+(1, 'Eletrônicos'),
+(2, 'Roupas'),
+(3, 'Acessórios'),
+(4, 'Alimentos'),
+(5, 'Bebidas'),
+(6, 'Casa e Jardim'),
+(7, 'Saúde e Beleza'),
+(8, 'Livros'),
+(9, 'Brinquedos'),
+(10, 'Esportes'),
+(11, 'Automóveis'),
+(12, 'Ferramentas'),
+(13, 'Móveis'),
+(14, 'Instrumentos Musicais'),
+(15, 'Jogos');
