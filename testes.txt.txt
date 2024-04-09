@@ -1,0 +1,46 @@
+1. Quais produtos um determinado cliente compra?
+2. Com qual frequencia um determinado cliente compra x produto?
+3. Verificar se ocorre uma variação de preço de x produto.
+4. Quais são os produtos mais vendidos ao menos vendido.
+5. Quais são as formas de pagamento mais utilizada?
+6. Qual categoria possui mais produto?
+7. A categoria que mais possui produto, também é a categoria que é mais vendida?
+8. Em qual fornecedor tem uma frequencia maior de compra?
+9. A pessoa que faz compra com mais frequencia, é a que mais gasta?
+10. As maiores quantidades de vendas são do produto de qual fornecedor?
+11. Os maiores valores de vendas de produtos são de qual fornecedor?
+--------------------------------------------------------------------------------
+
+1. Quais produtos, X categoria tem?
+2. Qual valor total de venda da Categoria X?
+3. Os produtos que estão com a quantidade zero, qual foi a última vez que foram comprados?
+
+
+SELECT nome_produto AS 'produto'
+FROM Produto
+INNER JOIN Categoria ON produto_id_categoria = id_categoria
+WHERE tipo_categoria = 'perfume';
+
+SELECT SUM(valor_venda) AS 'valor total'
+FROM Venda
+INNER JOIN Venda_Produto ON venda_id_venda = id_venda
+INNER JOIN Produto ON produto_id_produto = id_produto
+INNER JOIN Categoria ON produto_id_categoria = id_categoria
+WHERE tipo_categoria = 'maquiagem';
+
+SELECT nome_produto, data_compra 
+FROM produto
+INNER JOIN Compra_Produto ON produto_id_produto = id_produto
+INNER JOIN Compra ON compra_id_compra = id_compra
+WHERE quantidade_produto = 0;
+
+
+SELECT MAX(v.quantidade) AS 'Quantidade Vendida', f.razao_social AS 'Fornecedor'
+FROM Venda AS v 
+INNER JOIN Venda_Produto AS vp ON vp.venda_id_venda = v.id_venda
+INNER JOIN Produto AS p ON vp.produto_id_produto = p.id_produto
+INNER JOIN Fornecedor as f ON p.produto_id_fornecedor = f.id_fornecedor;
+
+
+1- Qual produto mais caro? *FUNCIONOU
+2- Qual o produto mais barato da categoria de X? *FUNCIONOU
